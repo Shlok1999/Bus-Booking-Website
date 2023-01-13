@@ -26,7 +26,7 @@ app.use(session({
     secret: '123456cat',
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 60000 }
+    cookie: { maxAge: 60000*24*60*60 }
 }))
 
 // Connecting to frontend
