@@ -23,10 +23,10 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(cors());
 app.use(session({ 
-    secret: '123456cat',
+    secret: process.env.JWT_SECRET_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 60000*24*60*60 }
+    cookie: { maxAge: 60000*24*60 }
 }))
 
 // Connecting to frontend

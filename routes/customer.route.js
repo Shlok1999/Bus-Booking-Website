@@ -21,6 +21,8 @@ router.get('/getAllBuses', (req, res) => {
     })
 })
 
+
+// Customer Register
 router.post('/signup', signupValidation, (req, res) => {
     const id = req.body.id;
     const f_name = req.body.f_name;
@@ -39,6 +41,7 @@ router.post('/signup', signupValidation, (req, res) => {
     })
 });
 
+// Customer Login
 router.post('/login', (req, res) => {
     const { phone } = req.body;
     connection.query('select * from customers where phone = ? ', [phone], (err, result) => {
@@ -50,17 +53,17 @@ router.post('/login', (req, res) => {
             req.session.userData = result[0];
 
             console.log(result[0].f_name + " Logged in")
-            res.redirect('/profile')
+            res.send('GO to profile page')
         }
         else {
             res.send({
                 message: "Wrong Credentials",
             })
         }
-
     })
-
 })
+
+
 
 
 // Customer check profile
@@ -78,23 +81,63 @@ router.get('/profile', (req, res) => {
 router.post('/update-profile/:id', (req, res) => {
     const id = req.params.id;
     var updateData = req.body;
-    
-    if(req.session){
+
+    if (req.session) {
         connection.query(`update customers
-        set ? where id=?`, [updateData, id], (err, result)=>{
-            if(err){
+        set ? where id=?`, [updateData, id], (err, result) => {
+            if (err) {
                 res.send(err);
             }
-            else{
+            else {
                 res.send(result);
             }
         })
-    }else{
+    } else {
         res.send("User Logged Out")
     }
-        
+
 })
 
+
+
+// Ticket Counter
+router.get('/ticket-counter', (req, res) => {
+    res.send("Ticket Counter")
+})
+
+
+// Select Bus to get bus price and details
+
+
+
+
+// Buy Ticket
+router.post('/add-passenger-details', (req, res) => {
+    const id = req.body.id;
+    const busId = req.body.id;
+    const customerId = req.body.id;
+    const price = req.body.price;
+
+    if (req.session) {
+        connection.query(`insert into passenger (id, bus_id, customer_id, price )
+        values (
+            ?,
+            (select id from bus_info where id=?),
+            (select id from customers where id =?),
+            ?
+        );`, [id, busId, customerId, price],
+        (err, result)=>{
+            if(err){
+                res.send(err);
+            }else{
+                res.send(result);
+            }
+        })
+    }
+    else {
+        res.send("User Logged Out")
+    }
+})
 
 
 
@@ -104,9 +147,7 @@ router.get('/logout', (req, res) => {
     res.send("Session ended")
 })
 
-router.get('/ticket-counter', (req, res)=>{
-    res.send("Ticket Counter")
-})
+
 
 
 
