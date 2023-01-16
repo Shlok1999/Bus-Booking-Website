@@ -10,6 +10,5 @@ exports.signupValidation = [
 
 
 exports.loginValidation = [
-    check('phone').isNumeric().isLength({min: 10, max: 10}),
-    check('password').not().isEmpty()
+    check('phone').isNumeric().isLength({min: 10, max: 10})
 ];

@@ -26,13 +26,13 @@ app.use(session({
     secret: process.env.JWT_SECRET_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 60000*24*60 }
+    cookie: { maxAge: 10000 }
 }))
 
 // Connecting to frontend
-app.use(express.static(path.join(__dirname, './bus-booking/build')))
+// app.use(express.static(path.join(__dirname, './bus-booking/public/index.html')))
 // app.get('/*', function (req, res) {
-//     res.sendFile(path.join(__dirname, './bus-booking/build', 'index.html'));
+//     res.sendFile(path.join(__dirname, './bus-booking/public', 'index.html'));
 // });
 
 

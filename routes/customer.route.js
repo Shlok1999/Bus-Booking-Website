@@ -23,26 +23,25 @@ router.get('/getAllBuses', (req, res) => {
 
 
 // Customer Register
-router.post('/signup', signupValidation, (req, res) => {
-    const id = req.body.id;
+router.post('/signup', (req, res) => {
     const f_name = req.body.f_name;
     const l_name = req.body.l_name;
     const phone = req.body.phone;
     const passsword = req.body.passsword;
     const address = req.body.address;
 
-    connection.query('insert into customers value (?,?,?,?,?,?)', [id, f_name, l_name, phone, passsword, address], (err, result) => {
+    connection.query('insert into customers value (?,?,?,?,?)', [f_name, l_name, phone, passsword, address], (err, result) => {
         if (err) {
             res.send(err)
         }
         else {
-            res.send("Passenger signed up");
+            res.send(result);
         }
     })
 });
 
 // Customer Login
-router.post('/login', (req, res) => {
+router.post('/login', loginValidation, (req, res) => {
     const { phone } = req.body;
     connection.query('select * from customers where phone = ? ', [phone], (err, result) => {
         if (err) {
@@ -53,7 +52,7 @@ router.post('/login', (req, res) => {
             req.session.userData = result[0];
 
             console.log(result[0].f_name + " Logged in")
-            res.send('GO to profile page')
+            res.redirect('/api/customer/profile')
         }
         else {
             res.send({
@@ -67,9 +66,20 @@ router.post('/login', (req, res) => {
 
 
 // Customer check profile
-router.get('/profile', (req, res) => {
+router.get('/profile/:phone', (req, res) => {
+    const phone = req.params.phone;
+    const f_name = req.body.f_name;
+    const l_name = req.body.l_name;
+    const address = req.body.address
     if (req.session) {
-        res.send(req.session.userData)
+        connection.query( `select f_name, l_name, address from customers where phone = ?`,[phone,f_name, l_name,address], (err, result)=>{
+            if(err){
+                res.send(err)
+            }
+            else{
+                res.send(result)
+            }
+        })
     }
     else {
         res.send({ message: 'User Logged out' })
@@ -78,13 +88,13 @@ router.get('/profile', (req, res) => {
 
 
 // Customer profile update
-router.post('/update-profile/:id', (req, res) => {
-    const id = req.params.id;
+router.post('/update-profile/:phone', (req, res) => {
+    const phone = req.params.phone;
     var updateData = req.body;
 
     if (req.session) {
         connection.query(`update customers
-        set ? where id=?`, [updateData, id], (err, result) => {
+        set ? where phone=?`, [updateData, phone], (err, result) => {
             if (err) {
                 res.send(err);
             }
@@ -106,7 +116,6 @@ router.get('/ticket-counter', (req, res) => {
 })
 
 
-// Select Bus to get bus price and details
 
 
 
