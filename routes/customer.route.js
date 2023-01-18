@@ -8,15 +8,30 @@ require('dotenv').config();
 const { signupValidation, loginValidation } = require('../validation/validation');
 
 
-// Get Bus from home page (wrt departure date and sort by time)->To be done
-router.get('/getAllBuses', (req, res) => {
-    connection.query(`select number_plate, arrivaltime, departure from bus_info `, (err, result) => {
-        if (err) {
+// Get Bus from home page
+// router.get('/getAllBuses', (req, res) => {
+//     connection.query(`select number_plate, arrivaltime, departure from bus_info `, (err, result) => {
+//         if (err) {
+//             res.send(err);
+//         }
+//         // 
+//         else {
+//             res.send({ result });
+//         }
+//     })
+// })
+
+router.post('/getBusesByDate', (req, res)=>{
+    // const dateOfJourney = req.body.dateOfJourney;
+    const origin = req.body.origin;
+    const destination = req.body.destination
+
+    connection.query(`select * from bus_info where origin=? AND destination=?`, [origin,destination], (err, result)=>{
+        if(err){
             res.send(err);
-        }
-        // 
-        else {
-            res.send({ result });
+        }else{
+            console.log(result)
+            res.send(result);
         }
     })
 })
@@ -27,10 +42,10 @@ router.post('/signup', (req, res) => {
     const f_name = req.body.f_name;
     const l_name = req.body.l_name;
     const phone = req.body.phone;
-    const passsword = req.body.passsword;
+    const password = req.body.password;
     const address = req.body.address;
 
-    connection.query('insert into customers value (?,?,?,?,?)', [f_name, l_name, phone, passsword, address], (err, result) => {
+    connection.query('insert into customers value (?,?,?,?,?)', [f_name, l_name, phone, password, address], (err, result) => {
         if (err) {
             res.send(err)
         }
@@ -42,8 +57,8 @@ router.post('/signup', (req, res) => {
 
 // Customer Login
 router.post('/login', loginValidation, (req, res) => {
-    const { phone } = req.body;
-    connection.query('select * from customers where phone = ? ', [phone], (err, result) => {
+    const { phone, password } = req.body;
+    connection.query('select * from customers where phone = ? AND password=? ', [phone, password], (err, result) => {
         if (err) {
             res.send(err);
         }
@@ -68,22 +83,21 @@ router.post('/login', loginValidation, (req, res) => {
 // Customer check profile
 router.get('/profile/:phone', (req, res) => {
     const phone = req.params.phone;
-    const f_name = req.body.f_name;
-    const l_name = req.body.l_name;
-    const address = req.body.address
-    if (req.session) {
-        connection.query( `select f_name, l_name, address from customers where phone = ?`,[phone,f_name, l_name,address], (err, result)=>{
+    if(req.session){
+        connection.query(`select * from customers where phone = ?`,[phone], (err, result)=>{
             if(err){
-                res.send(err)
+                res.send(err);
             }
             else{
-                res.send(result)
+                req.session.userData = result[0]
+                res.send(result[0])
             }
+    
         })
+    }else{
+        res.send("User Logged Out")
     }
-    else {
-        res.send({ message: 'User Logged out' })
-    }
+    
 })
 
 

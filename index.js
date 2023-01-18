@@ -26,7 +26,7 @@ app.use(session({
     secret: process.env.JWT_SECRET_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 10000 }
+    cookie: { maxAge: 60000*60*24 }
 }))
 
 // Connecting to frontend
