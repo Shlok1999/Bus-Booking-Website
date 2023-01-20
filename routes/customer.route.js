@@ -130,35 +130,26 @@ router.get('/ticket-counter', (req, res) => {
 })
 
 
-
-
-
-
 // Buy Ticket
 router.post('/add-passenger-details', (req, res) => {
-    const id = req.body.id;
-    const busId = req.body.id;
-    const customerId = req.body.id;
-    const price = req.body.price;
+    const {id,PassengerName, PassengerPhone, price, dateOfJourney, time, BusID} = req.body
 
-    if (req.session) {
-        connection.query(`insert into passenger (id, bus_id, customer_id, price )
-        values (
-            ?,
-            (select id from bus_info where id=?),
-            (select id from customers where id =?),
-            ?
-        );`, [id, busId, customerId, price],
-        (err, result)=>{
+
+    if(req.session){
+        connection.query(`insert into passenger  values(?,?,?,?,?,?,?)`
+        ,[id, PassengerName, PassengerPhone, price, dateOfJourney, time, BusID]
+        , (err, result)=>{
             if(err){
+                console.log(err)
                 res.send(err);
-            }else{
+            }
+            else{
+                console.log(result)
                 res.send(result);
             }
         })
-    }
-    else {
-        res.send("User Logged Out")
+    }else{
+        res.send("User Logged Out");
     }
 })
 

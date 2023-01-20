@@ -9,11 +9,17 @@ router.post('/postBuses', (req, res)=>{
     const number_plate = req.body.number_plate;
     const origin = req.body.origin;
     const destination = req.body.destination;
+    const dateOfArrival = req.body.dateOfArrival;
+    const dateOfJourney= req.body.dateOfJourney;
+    const timeOfDeparture = req.body.timeOfDeparture;
+    const timeOfArrival = req.body.timeOfArrival;
+    const price = req.body.price;
 
-    connection.query('insert into bus_info values (?,?,?,?)', [id,number_plate, origin, destination], (err, result)=>{
+    connection.query('insert into bus_info values (?,?,?,?,?,?,?,?,?)', [id,number_plate, origin, destination, dateOfArrival, dateOfJourney, timeOfDeparture, timeOfArrival, price], (err, result)=>{
         if(err){
             res.send(err);
         }else{
+            console.log(result)
             res.send("Result Posted")
         }
     })
