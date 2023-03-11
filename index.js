@@ -22,12 +22,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(cors());
-app.use(session({ 
-    secret: process.env.JWT_SECRET_KEY,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { maxAge: 60000*60*24 }
-}))
+// app.use(session({ 
+//     secret: process.env.JWT_SECRET_KEY,
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: { maxAge: 60000*60*24 }
+// }))
 
 // Connecting to frontend
 // app.use(express.static(path.join(__dirname, './bus-booking/public/index.html')))

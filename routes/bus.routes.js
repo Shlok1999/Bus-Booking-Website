@@ -68,7 +68,4 @@ router.put('/updateBus/:id', (req, res)=>{
 })
 
 
-
-
-
 module.exports = router;

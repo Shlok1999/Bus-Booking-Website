@@ -5,6 +5,11 @@ const jwt = require('jsonwebtoken');
 const cookie = require('cookie-parser')
 require('dotenv').config();
 
+// const transporter = require('./Email/sendEmail')
+
+const jwt_key = process.env.SECRET_KEY
+
+
 const { signupValidation, loginValidation } = require('../validation/validation');
 
 
@@ -63,15 +68,24 @@ router.post('/login', loginValidation, (req, res) => {
             res.send(err);
         }
         if (result.length) {
-            req.session.id = result[0].id;
-            req.session.userData = result[0];
-
-            console.log(result[0].f_name + " Logged in")
-            res.redirect('/api/customer/profile')
+            try{
+                jwt.sign({result}, jwt_key,{expiresIn: "2d"},(err, token)=>{
+                    if(err){
+                        res.send(err);
+                    }
+                    res.send({message: 'Login Successful',result: result[0], auth: token});
+                })
+                
+                // res.redirect('/school-dashboard');
+                console.log("You are Logged in")
+            }
+            catch(err){
+                res.send({message: "Invalid Credentials"});
+            }
         }
         else {
             res.send({
-                message: "Wrong Credentials",
+                message: err,
             })
         }
     })
